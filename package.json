@@ -7,6 +7,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@types/node": "^25.5.0",
+    "concurrently": "^9.2.1",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-import-resolver-typescript": "^4.4.4",
@@ -27,6 +28,8 @@
     "lint:css:check": "stylelint '**/*.css'",
     "lint:css:fix": "stylelint --fix '**/*.css'",
     "lint:js:check": "eslint --flag v10_config_lookup_from_file .",
-    "lint:js:fix": "eslint --flag v10_config_lookup_from_file --fix ."
+    "lint:js:fix": "eslint --flag v10_config_lookup_from_file --fix .",
+    "lint:check": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:check\" \"pnpm lint:js:check\"",
+    "lint:fix": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:fix\" \"pnpm lint:js:fix\""
   }
 }
