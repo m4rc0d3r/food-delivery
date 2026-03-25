@@ -1,9 +1,6 @@
 {
   "name": "food-delivery",
   "version": "0.0.0",
-  "type": "module",
-  "license": "ISC",
-  "packageManager": "pnpm@10.28.0",
   "devDependencies": {
     "@eslint/js": "^9.39.4",
     "@types/node": "^25.5.0",
@@ -22,15 +19,18 @@
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.57.2"
   },
+  "license": "ISC",
+  "packageManager": "pnpm@10.28.0",
   "scripts": {
     "format:check": "prettier --check .",
     "format:fix": "prettier --write .",
-    "type-check": "pnpm --parallel --filter './**' type-check",
+    "lint:check": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:check\" \"pnpm lint:js:check\"",
     "lint:css:check": "stylelint '**/*.css'",
     "lint:css:fix": "stylelint --fix '**/*.css'",
+    "lint:fix": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:fix\" \"pnpm lint:js:fix\"",
     "lint:js:check": "eslint --flag v10_config_lookup_from_file .",
     "lint:js:fix": "eslint --flag v10_config_lookup_from_file --fix .",
-    "lint:check": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:check\" \"pnpm lint:js:check\"",
-    "lint:fix": "concurrently -p \"[{name}]\" -n \"CSS,JS\" -c \"blue.bold,yellow.bold\" \"pnpm lint:css:fix\" \"pnpm lint:js:fix\""
-  }
+    "type-check": "pnpm --parallel --filter './**' type-check"
+  },
+  "type": "module"
 }
