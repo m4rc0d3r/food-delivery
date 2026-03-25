@@ -38,7 +38,7 @@
     "lint:js:check": "eslint --flag v10_config_lookup_from_file .",
     "lint:js:fix": "eslint --flag v10_config_lookup_from_file --fix .",
     "prepare": "husky",
-    "type-check": "pnpm --parallel --filter './**' type-check"
+    "type-check": "concurrently -p \"[{name}]\" -n \"Root,Packages\" -c \"blue.bold,yellow.bold\" \"tsc --noEmit\" \"pnpm --parallel --filter './**' type-check\""
   },
   "type": "module"
 }
