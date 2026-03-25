@@ -26,7 +26,7 @@
     "type-check": "pnpm --parallel --filter './**' type-check",
     "lint:css:check": "stylelint '**/*.css'",
     "lint:css:fix": "stylelint --fix '**/*.css'",
-    "lint:js:check": "eslint .",
-    "lint:js:fix": "eslint --fix ."
+    "lint:js:check": "eslint --flag v10_config_lookup_from_file .",
+    "lint:js:fix": "eslint --flag v10_config_lookup_from_file --fix ."
   }
 }
