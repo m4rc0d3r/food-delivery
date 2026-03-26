@@ -1,0 +1,22 @@
+{
+  "name": "@workspace/core",
+  "version": "0.0.0",
+  "exports": {
+    "types": "./dist/index.d.ts",
+    "default": "./dist/index.js"
+  },
+  "license": "ISC",
+  "scripts": {
+    "build": "concurrently --kill-others-on-fail -p \"[{name}]\" -n \"TSC,SWC\" -c \"blue.bold,yellow.bold\" \"pnpm build:ts\" \"pnpm build:swc\"",
+    "build:swc": "swc src -d dist --strip-leading-paths",
+    "build:ts": "tsc -p tsconfig.app.json",
+    "dev": "pnpm watch",
+    "type-check": "concurrently -p \"[{name}]\" -n \"App,Node\" -c \"blue.bold,yellow.bold\" \"pnpm type-check-app\" \"pnpm type-check-node\"",
+    "type-check-app": "tsc --noEmit -p tsconfig.app.json",
+    "type-check-node": "tsc --noEmit -p tsconfig.node.json",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TSC,SWC\" -c \"blue.bold,yellow.bold\" \"pnpm watch:ts\" \"pnpm watch:swc\"",
+    "watch:swc": "pnpm build:swc -w",
+    "watch:ts": "pnpm build:ts -w --preserveWatchOutput"
+  },
+  "type": "module"
+}
