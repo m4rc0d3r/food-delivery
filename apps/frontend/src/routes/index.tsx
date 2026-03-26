@@ -2,6 +2,10 @@ import * as fs from "node:fs";
 
 import { createFileRoute, useRouter } from "@tanstack/react-router";
 import { createServerFn } from "@tanstack/react-start";
+import type { App } from "backend";
+import { hc } from "hono/client";
+
+const client = hc<App>("http://localhost:8787/");
 
 const filePath = "count.txt";
 
@@ -33,6 +37,7 @@ function Home() {
       onClick={() => {
         void updateCount({ data: 1 }).then(() => {
           void router.invalidate();
+          void client.index.$get().then(async (value) => console.log(await value.text()));
         });
       }}
     >
