@@ -1,0 +1,15 @@
+{
+  "name": "backend",
+  "dependencies": {
+    "hono": "^4.12.9"
+  },
+  "devDependencies": {
+    "wrangler": "^4.4.0"
+  },
+  "scripts": {
+    "cf-typegen": "wrangler types --env-interface CloudflareBindings",
+    "deploy": "wrangler deploy --minify",
+    "dev": "wrangler dev"
+  },
+  "type": "module"
+}
