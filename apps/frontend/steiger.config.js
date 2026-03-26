@@ -9,4 +9,10 @@ export default defineConfig([
       "fsd/public-api": "off",
     },
   },
+  {
+    files: ["src/shared/ui/lib/**"],
+    rules: {
+      "fsd/no-reserved-folder-names": "off",
+    },
+  },
 ]);
