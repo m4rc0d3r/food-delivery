@@ -1,8 +1,8 @@
-import { z } from "zod";
+import * as z from "zod";
 
 const zDrizzleConfig = z
   .object({
-    DRIZZLE_DATABASE_URL: z.string().url(),
+    DRIZZLE_DATABASE_URL: z.url(),
     DRIZZLE_CASING: z.enum(["snake_case", "camelCase"]),
   })
   .transform(({ DRIZZLE_DATABASE_URL, DRIZZLE_CASING }) => ({

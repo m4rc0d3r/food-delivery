@@ -1,5 +1,6 @@
 import type { Rec } from "@workspace/core";
 import { Domain } from "@workspace/core";
+import { DrizzleQueryError } from "drizzle-orm";
 import { DatabaseError } from "pg";
 
 import { COUPON_CONSTRAINTS, USER_CONSTRAINTS } from "./schema";
@@ -8,16 +9,19 @@ const ERROR_CODE = {
   uniqueKeyViolation: "23505",
 } as const;
 
-type UniqueKeyViolationError = DatabaseError & {
-  code: (typeof ERROR_CODE)["uniqueKeyViolation"];
-  constraint: string;
+type UniqueKeyViolationError = DrizzleQueryError & {
+  cause: DatabaseError & {
+    code: (typeof ERROR_CODE)["uniqueKeyViolation"];
+    constraint: string;
+  };
 };
 
 function isUniqueKeyViolation(error: unknown): error is UniqueKeyViolationError {
   return (
-    error instanceof DatabaseError &&
-    error.code === ERROR_CODE.uniqueKeyViolation &&
-    typeof error.constraint === "string"
+    error instanceof DrizzleQueryError &&
+    error.cause instanceof DatabaseError &&
+    error.cause.code === ERROR_CODE.uniqueKeyViolation &&
+    typeof error.cause.constraint === "string"
   );
 }
 

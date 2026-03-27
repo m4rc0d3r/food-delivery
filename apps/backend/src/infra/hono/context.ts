@@ -1,0 +1,64 @@
+import { Str } from "@workspace/core";
+import { drizzle } from "drizzle-orm/node-postgres";
+import type { ContextVariableMap } from "hono";
+import type { CookieOptions } from "hono/utils/cookie";
+
+import type { Config } from "../config";
+
+import type { AuthTokenPayload } from "@/features/auth";
+import { CryptoService, generateSafeUid } from "@/features/crypto";
+import { BcryptHashProvider, HashingService } from "@/features/hashing";
+import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
+import { DrizzleUserRepository, UserService } from "@/features/user";
+
+declare module "hono" {
+  // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+  interface ContextVariableMap {
+    config: Config;
+    cookieOptions: CookieOptions;
+    cryptoService: CryptoService;
+    authTokenService: JwtService<AuthTokenPayload>;
+    userService: UserService;
+  }
+}
+
+function create(config: Config): ContextVariableMap {
+  const {
+    auth: {
+      jwt: {
+        access: { secret, lifetime },
+      },
+    },
+    bcrypt: { roundsForPasswordHash },
+    cookie: { domain, secure },
+    drizzle: { databaseUrl, casing },
+    server: { protocol },
+  } = config;
+
+  const db = drizzle({
+    connection: databaseUrl,
+    casing,
+  });
+
+  return {
+    config: config,
+    cookieOptions: {
+      domain,
+      httpOnly: true,
+      path: Str.SLASH,
+      sameSite: "strict",
+      secure: secure === "auto" ? protocol === "https" : secure,
+    },
+    cryptoService: new CryptoService(generateSafeUid),
+    authTokenService: new JwtService(secret, lifetime, generateJwt, verifyJwt),
+    userService: new UserService(
+      new DrizzleUserRepository(db),
+      new HashingService(
+        BcryptHashProvider.createDataHasher(roundsForPasswordHash),
+        BcryptHashProvider.compareHashData,
+      ),
+    ),
+  };
+}
+
+export { create };

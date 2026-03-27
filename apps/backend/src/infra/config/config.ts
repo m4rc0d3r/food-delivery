@@ -1,12 +1,24 @@
 import { either as e } from "fp-ts";
-import { z } from "zod";
+import * as z from "zod";
 
+import { zAuthConfig } from "./auth";
+import { zBcryptConfig } from "./bcrypt";
+import { zClientAppConfig } from "./client-app";
+import { zCookieConfig } from "./cookie";
+import { zCorsConfig } from "./cors";
 import { zDrizzleConfig } from "./drizzle";
+import { zServerConfig } from "./server";
 
 const zConfig = z
   .object({
     NODE_ENV: z.enum(["dev", "prod"]),
+    auth: zAuthConfig,
+    bcrypt: zBcryptConfig,
+    clientApp: zClientAppConfig,
+    cookie: zCookieConfig,
+    cors: zCorsConfig,
     drizzle: zDrizzleConfig,
+    server: zServerConfig,
   })
   .transform(({ NODE_ENV, ...rest }) => ({
     nodeEnv: NODE_ENV,
