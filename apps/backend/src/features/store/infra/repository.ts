@@ -1,6 +1,6 @@
 import { ImpossibleError, Pagination, Str, UnexpectedError } from "@workspace/core";
 import type { SQL } from "drizzle-orm";
-import { and, gte, ilike, lte, or, sql } from "drizzle-orm";
+import { and, gte, ilike, lte, sql } from "drizzle-orm";
 import { function as function_, taskEither } from "fp-ts";
 
 import type { RepositoryIos } from "../app";
@@ -40,7 +40,7 @@ class DrizzleRepository extends Repository {
       ...(typeof name === "string"
         ? [ilike(stores.name, ["%", escapeLikeArgument(name), "%"].join(Str.EMPTY))]
         : []),
-      or(...ratingConditions),
+      and(...ratingConditions),
     );
 
     return function_.pipe(

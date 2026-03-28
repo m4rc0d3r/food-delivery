@@ -108,7 +108,7 @@ function LoginPage() {
   };
 
   return (
-    <div className="flex h-full">
+    <div className="flex grow">
       <Card className="m-auto min-w-1/2">
         <CardHeader className="*:text-center">
           <CardTitle>Account login</CardTitle>
