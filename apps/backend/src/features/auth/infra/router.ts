@@ -14,105 +14,97 @@ import { UserServiceIos } from "@/features/user";
 import { ErrorCode, Hono as Hono2 } from "@/infra";
 
 const router = new Hono()
-  .post(
-    "/register",
-    zValidator("json", UserServiceIos.Create.zIn, Hono2.zodValidatorHook),
-    async (c) => {
-      const {
-        config: {
-          auth: { tokenCookieName },
-        },
-        cookieOptions,
-        userService,
-        authTokenService,
-      } = c.var;
-      const user = c.req.valid("json");
+  .post("/register", zValidator("json", UserServiceIos.Create.zIn), async (c) => {
+    const {
+      config: {
+        auth: { tokenCookieName },
+      },
+      cookieOptions,
+      userService,
+      authTokenService,
+    } = c.var;
+    const user = c.req.valid("json");
 
-      const resultOfCreation = await function_.pipe(
-        userService.create(user),
-        taskEither.flatMap((user) =>
-          function_.pipe(
-            authTokenService.generate({ userId: user.id }),
-            taskEither.tapIO(
-              ({ token: authToken, payload }) =>
-                () =>
-                  setAuthenticationCookie(
-                    c,
-                    { name: tokenCookieName, options: cookieOptions },
-                    { encoded: authToken, payload },
-                  ),
-            ),
-            taskEither.map(() => user),
-            taskEither.map(({ passwordHash, updatedAt, ...me }) => me),
+    const resultOfCreation = await function_.pipe(
+      userService.create(user),
+      taskEither.flatMap((user) =>
+        function_.pipe(
+          authTokenService.generate({ userId: user.id }),
+          taskEither.tapIO(
+            ({ token: authToken, payload }) =>
+              () =>
+                setAuthenticationCookie(
+                  c,
+                  { name: tokenCookieName, options: cookieOptions },
+                  { encoded: authToken, payload },
+                ),
           ),
+          taskEither.map(() => user),
+          taskEither.map(({ passwordHash, updatedAt, ...me }) => me),
         ),
-        taskEither.toUnion,
-      )();
+      ),
+      taskEither.toUnion,
+    )();
 
-      if (resultOfCreation instanceof Error) {
-        if (resultOfCreation instanceof UniqueKeyViolationError) {
-          switch (resultOfCreation.constraintName) {
-            case Domain.User.Constraint.UNIQUE_USER_EMAIL:
-              return Hono2.Response.Factory.conflict(c, ErrorCode.EMAIL_IS_IN_USE_BY_ANOTHER_USER);
-            case Domain.User.Constraint.UNIQUE_USER_PHONE:
-              return Hono2.Response.Factory.conflict(c, ErrorCode.PHONE_IS_IN_USE_BY_ANOTHER_USER);
-          }
+    if (resultOfCreation instanceof Error) {
+      if (resultOfCreation instanceof UniqueKeyViolationError) {
+        switch (resultOfCreation.constraintName) {
+          case Domain.User.Constraint.UNIQUE_USER_EMAIL:
+            return Hono2.Response.Factory.conflict(c, ErrorCode.EMAIL_IS_IN_USE_BY_ANOTHER_USER);
+          case Domain.User.Constraint.UNIQUE_USER_PHONE:
+            return Hono2.Response.Factory.conflict(c, ErrorCode.PHONE_IS_IN_USE_BY_ANOTHER_USER);
         }
-
-        return Hono2.Response.Factory.internalServerError(c);
       }
 
-      return Hono2.Response.Factory.created(c, {
-        me: resultOfCreation,
-      });
-    },
-  )
-  .post(
-    "/login",
-    zValidator("json", UserServiceIos.GetByCredentials.zIn, Hono2.zodValidatorHook),
-    async (c) => {
-      const {
-        config: {
-          auth: { tokenCookieName },
-        },
-        cookieOptions,
-        userService,
-        authTokenService,
-      } = c.var;
-      const user = c.req.valid("json");
+      return Hono2.Response.Factory.internalServerError(c);
+    }
 
-      const searchResult = await function_.pipe(
-        userService.getByCredentials(user),
-        taskEither.flatMap((user) =>
-          function_.pipe(
-            authTokenService.generate({ userId: user.id }),
-            taskEither.tapIO(
-              ({ token: authToken, payload }) =>
-                () =>
-                  setAuthenticationCookie(
-                    c,
-                    { name: tokenCookieName, options: cookieOptions },
-                    { encoded: authToken, payload },
-                  ),
-            ),
-            taskEither.map(() => user),
-            taskEither.map(({ passwordHash, updatedAt, ...me }) => me),
+    return Hono2.Response.Factory.created(c, {
+      me: resultOfCreation,
+    });
+  })
+  .post("/login", zValidator("json", UserServiceIos.GetByCredentials.zIn), async (c) => {
+    const {
+      config: {
+        auth: { tokenCookieName },
+      },
+      cookieOptions,
+      userService,
+      authTokenService,
+    } = c.var;
+    const user = c.req.valid("json");
+
+    const searchResult = await function_.pipe(
+      userService.getByCredentials(user),
+      taskEither.flatMap((user) =>
+        function_.pipe(
+          authTokenService.generate({ userId: user.id }),
+          taskEither.tapIO(
+            ({ token: authToken, payload }) =>
+              () =>
+                setAuthenticationCookie(
+                  c,
+                  { name: tokenCookieName, options: cookieOptions },
+                  { encoded: authToken, payload },
+                ),
           ),
+          taskEither.map(() => user),
+          taskEither.map(({ passwordHash, updatedAt, ...me }) => me),
         ),
-        taskEither.toUnion,
-      )();
+      ),
+      taskEither.toUnion,
+    )();
 
-      if (searchResult instanceof Error) {
-        if (searchResult instanceof NotFoundError) return Hono2.Response.Factory.notFound(c);
+    if (searchResult instanceof Error) {
+      if (searchResult instanceof NotFoundError) return Hono2.Response.Factory.notFound(c);
 
-        return Hono2.Response.Factory.internalServerError(c);
-      }
+      return Hono2.Response.Factory.internalServerError(c);
+    }
 
-      return Hono2.Response.Factory.ok(c, {
-        me: searchResult,
-      });
-    },
-  )
+    return Hono2.Response.Factory.ok(c, {
+      me: searchResult,
+    });
+  })
   .post("/logout", async (c) => {
     const {
       config: {

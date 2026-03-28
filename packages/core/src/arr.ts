@@ -1,0 +1,3 @@
+const NON_EXISTENT_INDEX = -1;
+
+export { NON_EXISTENT_INDEX };

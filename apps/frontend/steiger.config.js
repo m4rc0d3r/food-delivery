@@ -15,4 +15,10 @@ export default defineConfig([
       "fsd/no-reserved-folder-names": "off",
     },
   },
+  {
+    files: ["src/{entities/{auth,di,event-bus,user},widgets}/**"],
+    rules: {
+      "fsd/insignificant-slice": "off",
+    },
+  },
 ]);

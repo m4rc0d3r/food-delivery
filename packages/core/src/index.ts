@@ -1,7 +1,12 @@
+export * from "./arr";
 export * as Domain from "./domain";
 export * as Enum from "./enum";
 export * from "./errors";
+export * from "./fp";
+export * as Http from "./http";
+export * from "./no-topic";
 export type * as Rec from "./rec";
 export * as Str from "./str";
 export * as Time from "./time";
+export * as TypeGuard from "./type-guard";
 export * from "./zod";

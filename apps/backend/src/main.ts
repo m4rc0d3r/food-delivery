@@ -15,6 +15,9 @@ const eitherConfig = createConfig(process.env);
 if (either.isLeft(eitherConfig)) throw eitherConfig.left;
 
 const config = eitherConfig.right;
+const {
+  cors: { origin, credentials },
+} = config;
 
 const app = new Hono()
   .use("*", async (c, next) => {
@@ -26,7 +29,13 @@ const app = new Hono()
 
     await next();
   })
-  .use("*", cors())
+  .use(
+    "*",
+    cors({
+      origin,
+      credentials,
+    }),
+  )
   .get("/", (c) => {
     return c.text("Hello Hono!");
   })
