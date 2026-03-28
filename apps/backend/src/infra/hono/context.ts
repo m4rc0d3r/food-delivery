@@ -9,6 +9,7 @@ import type { AuthTokenPayload } from "@/features/auth";
 import { CryptoService, generateSafeUid } from "@/features/crypto";
 import { BcryptHashProvider, HashingService } from "@/features/hashing";
 import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
+import { DrizzleStoreRepository, StoreService } from "@/features/store";
 import { DrizzleUserRepository, UserService } from "@/features/user";
 
 declare module "hono" {
@@ -19,6 +20,7 @@ declare module "hono" {
     cryptoService: CryptoService;
     authTokenService: JwtService<AuthTokenPayload>;
     userService: UserService;
+    storeService: StoreService;
   }
 }
 
@@ -58,6 +60,7 @@ function create(config: Config): ContextVariableMap {
         BcryptHashProvider.compareHashData,
       ),
     ),
+    storeService: new StoreService(new DrizzleStoreRepository(db)),
   };
 }
 
