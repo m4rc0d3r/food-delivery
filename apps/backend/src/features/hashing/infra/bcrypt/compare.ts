@@ -1,5 +1,5 @@
 import { UnexpectedError } from "@workspace/core";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import { taskEither } from "fp-ts";
 
 import type { CompareDataHash } from "../../app";
