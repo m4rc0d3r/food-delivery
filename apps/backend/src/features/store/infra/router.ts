@@ -6,7 +6,7 @@ import { StoreRepositoryIos } from "..";
 
 import { Hono as Hono2 } from "@/infra";
 
-const router = new Hono().get(
+const router = new Hono().post(
   "/list",
   zValidator("json", StoreRepositoryIos.List.zIn),
   async (c) => {
