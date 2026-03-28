@@ -14,7 +14,6 @@ class Service {
   constructor(userRepository: Repository, passwordHashingService: HashingService) {
     this.userRepository = userRepository;
     this.passwordHashingService = passwordHashingService;
-    this.userRepository = userRepository;
   }
 
   create({ password, ...rest }: Create.In) {
