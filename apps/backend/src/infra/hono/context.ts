@@ -6,6 +6,7 @@ import type { CookieOptions } from "hono/utils/cookie";
 import type { Config } from "../config";
 
 import type { AuthTokenPayload } from "@/features/auth";
+import { CategoryService, DrizzleCategoryRepository } from "@/features/category";
 import { CryptoService, generateSafeUid } from "@/features/crypto";
 import { BcryptHashProvider, HashingService } from "@/features/hashing";
 import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
@@ -23,6 +24,7 @@ declare module "hono" {
     userService: UserService;
     storeService: StoreService;
     storeProductService: StoreProductService;
+    categoryService: CategoryService;
   }
 }
 
@@ -64,6 +66,7 @@ function create(config: Config): ContextVariableMap {
     ),
     storeService: new StoreService(new DrizzleStoreRepository(db)),
     storeProductService: new StoreProductService(new DrizzleStoreProductRepository(db)),
+    categoryService: new CategoryService(new DrizzleCategoryRepository(db)),
   };
 }
 
