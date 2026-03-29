@@ -1,7 +1,6 @@
 import { ImpossibleError, Pagination, Sorting, Str, UnexpectedError } from "@workspace/core";
 import type { SQL } from "drizzle-orm";
 import { sql } from "drizzle-orm";
-import { PgDialect } from "drizzle-orm/pg-core";
 import { function as function_, taskEither } from "fp-ts";
 
 import type { RepositoryIos } from "../app";
@@ -38,7 +37,7 @@ class DrizzleRepository extends Repository {
             FROM
               categories
             WHERE
-              id IN (${categoryIds})
+              id IN ${categoryIds}
             UNION ALL
             SELECT
               c.id
@@ -113,8 +112,6 @@ class DrizzleRepository extends Repository {
       OFFSET
         ${Pagination.getNumberOfSkippedItems(pagination)};
     `);
-
-    console.log(new PgDialect().sqlToQuery(finalSql).sql);
 
     type StoreProduct = Out["data"][number];
     type DbStoreProduct = StoreProduct & {
