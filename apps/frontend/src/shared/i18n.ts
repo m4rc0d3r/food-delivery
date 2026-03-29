@@ -4,4 +4,11 @@ function formatDate(date: Date | number) {
   }).format(date);
 }
 
-export { formatDate };
+function formatCurrency(value: number) {
+  return new Intl.NumberFormat("de-DE", {
+    style: "currency",
+    currency: "EUR",
+  }).format(value);
+}
+
+export { formatCurrency, formatDate };

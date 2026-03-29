@@ -4,19 +4,20 @@ import { keepPreviousData } from "@tanstack/react-query";
 import { Domain, Pagination, range, Sorting, Str } from "@workspace/core";
 import { zStoreRepositoryIosListIn } from "backend";
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, Funnel } from "lucide-react";
-import type { Dispatch, SetStateAction } from "react";
+import type { ComponentProps } from "react";
 import { useState } from "react";
 import type z from "zod";
 
+import { defineListParamsChangeHandlers } from "./common";
+import { ProductPanel } from "./product-panel";
 import { StoreCard } from "./store-card";
 import { StoreCardSkeleton } from "./store-card/skeleton";
 
 import { useDiContainer } from "@/entities/di";
-import type { Store } from "@/entities/store";
 import { StoreQuery } from "@/entities/store";
 import { DEBOUNCE_TIME } from "@/shared/pacer";
+import { cn } from "@/shared/ui/lib";
 import {
-  Badge,
   Button,
   Field,
   FieldDescription,
@@ -112,7 +113,9 @@ function HomePage() {
   const isFieldInvalid = ({ isTouched, isValid }: { isTouched: boolean; isValid: boolean }) =>
     isTouched && !isValid;
 
-  const [selectedStoreId, setSelectedStoreId] = useState<Store["id"] | null>(null);
+  const [selectedStoreId, setSelectedStoreId] = useState<
+    ComponentProps<typeof ProductPanel>["selectedStore"]["id"] | null
+  >(null);
 
   return (
     <div className="flex grow">
@@ -353,16 +356,16 @@ function HomePage() {
         ) : stores.data.length ? (
           <ul className="flex grow flex-col gap-4 overflow-auto">
             {stores.data.map((store) => (
-              <li key={store.id}>
+              <li
+                key={store.id}
+                className={cn("p-1", store.id === selectedStoreId && "bg-foreground rounded-xl")}
+              >
                 <button
                   type="button"
                   className="relative"
                   onClick={() => setSelectedStoreId(store.id)}
                 >
                   <StoreCard store={store} />
-                  {store.id === selectedStoreId && (
-                    <Badge className="absolute top-0 right-0 bg-green-600 text-lg">Selected</Badge>
-                  )}
                 </button>
               </li>
             ))}
@@ -371,36 +374,11 @@ function HomePage() {
           <p className="text-center">No stores found</p>
         )}
       </aside>
-      <div className="flex grow">
-        <h3 className="m-auto text-5xl">Products</h3>
-      </div>
+      {selectedStoreId !== null && (
+        <ProductPanel selectedStore={stores!.data.find(({ id }) => id === selectedStoreId)!} />
+      )}
     </div>
   );
-}
-
-function defineListParamsChangeHandlers<Filter, Sorting, Pagination extends Pagination.Options>(
-  setFilter: Dispatch<SetStateAction<Filter>>,
-  setSorting: Dispatch<SetStateAction<Sorting>>,
-  setPagination: Dispatch<SetStateAction<Pagination>>,
-) {
-  const handleFilterChange: typeof setFilter = (value) => {
-    setFilter(value);
-    resetPagination();
-  };
-
-  const handleSortChange: typeof setSorting = (value) => {
-    setSorting(value);
-    resetPagination();
-  };
-
-  const resetPagination = () => {
-    setPagination((prev) => ({ ...prev, number: Pagination.DEFAULT_OPTIONS.number }));
-  };
-
-  return {
-    handleFilterChange,
-    handleSortChange,
-  };
 }
 
 export { HomePage };

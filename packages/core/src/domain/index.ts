@@ -1,4 +1,5 @@
 export * as Category from "./category";
+export * as Common from "./common";
 export * as Coupon from "./coupon";
 export * as Order from "./order";
 export * as OrderItem from "./order-item";

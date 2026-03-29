@@ -6,7 +6,10 @@ const STORE_PRODUCT = "storeProduct";
 const LIST = "list";
 
 const QUERY_KEYS = createQueryKeys(STORE_PRODUCT, {
-  [LIST]: (params: Parameters<Service[typeof LIST]>[0]) => [params],
+  [LIST]: (
+    storeId: Parameters<Service[typeof LIST]>[0]["filter"]["storeId"],
+    params: Parameters<Service[typeof LIST]>[0],
+  ) => [storeId, params],
 });
 
 export { LIST, QUERY_KEYS };
