@@ -1,13 +1,13 @@
 import * as z from "zod";
 
-import { Id, LifeCycleDates, Price, Quantity } from "../common";
+import { Id, LifeCycleDates, PositiveQuantity, Price } from "../common";
 
 const zSchema = z
   .object({
     id: Id.zSchema,
     orderId: Id.zSchema,
     productId: Id.zSchema,
-    quantity: Quantity.zSchema,
+    quantity: PositiveQuantity.zSchema,
     price: Price.zSchema,
   })
   .extend(LifeCycleDates.zSchema.shape);

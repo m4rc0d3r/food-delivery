@@ -2,7 +2,7 @@ import * as z from "zod";
 
 const CONSTRAINTS = {
   value: {
-    minimum: 0,
+    minimum: 1,
   },
 };
 
