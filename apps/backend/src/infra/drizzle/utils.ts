@@ -39,13 +39,8 @@ const SORTING_OPERATOR_BY_DIRECTION: Record<Sorting.Direction, typeof asc | type
   DESC: desc,
 };
 
-const SYMBOLS = ["%", "_", "\\"];
-
 function escapeLikeArgument(value: string) {
-  return SYMBOLS.reduce(
-    (escapedValue, symbol) => escapedValue.replaceAll(symbol, `\\${symbol}`),
-    value,
-  );
+  return value.replaceAll(/[_%\\]/gm, "\\$&");
 }
 
 export {

@@ -21,6 +21,8 @@
     "@types/uid-safe": "^2.1.5",
     "@workspace/core": "workspace:*",
     "drizzle-kit": "^0.31.10",
+    "prettier-plugin-embed": "^0.5.1",
+    "prettier-plugin-sql": "^0.20.0",
     "tsx": "^4.21.0",
     "type-fest": "^5.5.0",
     "wrangler": "^4.4.0"
