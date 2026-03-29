@@ -4,4 +4,5 @@ export * as Order from "./order";
 export * as OrderItem from "./order-item";
 export * as Product from "./product";
 export * as Store from "./store";
+export * as StoreProduct from "./store-product";
 export * as User from "./user";

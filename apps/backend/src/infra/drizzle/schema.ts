@@ -5,6 +5,7 @@ import {
   integer,
   pgEnum,
   pgTable,
+  primaryKey,
   serial,
   text,
   timestamp,
@@ -99,7 +100,6 @@ const orderItems = pgTable("order_items", {
 const products = pgTable("products", {
   id: serial().primaryKey(),
   name: text().notNull(),
-  price: doublePrecision().notNull(),
   categoryId: integer("category_id")
     .notNull()
     .references(() => categories.id),
@@ -114,6 +114,18 @@ const stores = pgTable("stores", {
   image: text(),
   ...LIFE_CYCLE_DATES,
 });
+
+const storeProducts = pgTable(
+  "store_products",
+  {
+    storeId: integer("store_id").notNull(),
+    productId: integer("product_id").notNull(),
+    price: doublePrecision().notNull(),
+    stock: integer().notNull(),
+    ...LIFE_CYCLE_DATES,
+  },
+  (table) => [primaryKey({ columns: [table.storeId, table.productId] })],
+);
 
 const USER_META = {
   tableName: "users",
@@ -144,6 +156,7 @@ export {
   orderItems,
   orders,
   products,
+  storeProducts,
   stores,
   USER_CONSTRAINTS,
   USER_META,

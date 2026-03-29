@@ -9,8 +9,8 @@ import type { AuthTokenPayload } from "@/features/auth";
 import { CryptoService, generateSafeUid } from "@/features/crypto";
 import { BcryptHashProvider, HashingService } from "@/features/hashing";
 import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
-import { DrizzleProductRepository, ProductService } from "@/features/product";
 import { DrizzleStoreRepository, StoreService } from "@/features/store";
+import { DrizzleStoreProductRepository, StoreProductService } from "@/features/store-product";
 import { DrizzleUserRepository, UserService } from "@/features/user";
 
 declare module "hono" {
@@ -22,7 +22,7 @@ declare module "hono" {
     authTokenService: JwtService<AuthTokenPayload>;
     userService: UserService;
     storeService: StoreService;
-    productService: ProductService;
+    storeProductService: StoreProductService;
   }
 }
 
@@ -63,7 +63,7 @@ function create(config: Config): ContextVariableMap {
       ),
     ),
     storeService: new StoreService(new DrizzleStoreRepository(db)),
-    productService: new ProductService(new DrizzleProductRepository(db)),
+    storeProductService: new StoreProductService(new DrizzleStoreProductRepository(db)),
   };
 }
 

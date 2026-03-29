@@ -1,13 +1,13 @@
 import * as z from "zod";
 
-import { Id, Image, LifeCycleDates } from "../common";
+import { Id, LifeCycleDates, Price, Quantity } from "../common";
 
 const zSchema = z
   .object({
-    id: Id.zSchema,
-    name: z.string().trim(),
-    categoryId: Id.zSchema,
-    image: Image.zAsUrlSchema.nullable(),
+    storeId: Id.zSchema,
+    productId: Id.zSchema,
+    price: Price.zSchema,
+    stock: Quantity.zSchema,
   })
   .extend(LifeCycleDates.zSchema.shape);
 type Schema = z.infer<typeof zSchema>;

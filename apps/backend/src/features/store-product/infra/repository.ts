@@ -1,13 +1,14 @@
 import { ImpossibleError, Pagination, Sorting, Str, UnexpectedError } from "@workspace/core";
-import type { InferSelectModel, SQL } from "drizzle-orm";
+import type { SQL } from "drizzle-orm";
 import { sql } from "drizzle-orm";
+import { PgDialect } from "drizzle-orm/pg-core";
 import { function as function_, taskEither } from "fp-ts";
 
 import type { RepositoryIos } from "../app";
 import { Repository } from "../app";
 import type { Out } from "../app/ports/repository/ios/list";
 
-import type { Db, products } from "@/infra";
+import type { Db } from "@/infra";
 import { escapeLikeArgument } from "@/infra";
 
 const MESSAGE_ABOUT_INCORRECT_SELECTION_RESULT =
@@ -22,7 +23,7 @@ class DrizzleRepository extends Repository {
   }
 
   override list({
-    filter: { name, price: { minimum, maximum } = {}, categoryIds } = {},
+    filter: { storeId, name, price: { minimum, maximum } = {}, categoryIds },
     sorting: { direction, field },
     pagination,
   }: RepositoryIos.List.In): taskEither.TaskEither<UnexpectedError | ImpossibleError, Out> {
@@ -50,16 +51,18 @@ class DrizzleRepository extends Repository {
 
     finalSql.append(sql`
       SELECT
-        p.id,
+        sp.store_id AS "storeId",
+        sp.product_id AS "productId",
+        sp.price,
+        sp.stock,
+        sp.created_at AS "createdAt",
         p.name,
-        p.price,
         p.image,
         p.category_id AS "categoryId",
-        p.created_at AS "createdAt",
-        p.updated_at AS "updatedAt",
         count(*) OVER () AS "totalCount"
       FROM
-        products p
+        store_products sp
+        INNER JOIN products p ON sp.product_id = p.id
     `);
 
     const conditions: SQL[] = [];
@@ -69,11 +72,11 @@ class DrizzleRepository extends Repository {
     }
 
     if (typeof minimum === "number") {
-      conditions.push(sql` p.price >= ${minimum} `);
+      conditions.push(sql` sp.price >= ${minimum} `);
     }
 
     if (typeof maximum === "number") {
-      conditions.push(sql` p.price <= ${maximum} `);
+      conditions.push(sql` sp.price <= ${maximum} `);
     }
 
     if (categoryIds) {
@@ -87,28 +90,34 @@ class DrizzleRepository extends Repository {
       `);
     }
 
-    if (conditions.length > 0) {
-      finalSql.append(sql` WHERE `);
+    finalSql.append(sql`
+      WHERE
+        sp.store_id = ${storeId}
+    `);
 
-      for (let i = 0; i < conditions.length; ++i) {
-        finalSql.append(conditions[i]!);
-        if (i < conditions.length - 1) {
-          finalSql.append(sql` AND `);
-        }
+    if (conditions.length > 0) {
+      for (const condition of conditions) {
+        finalSql.append(sql` AND `);
+        finalSql.append(condition);
       }
     }
 
     finalSql.append(sql`
       ORDER BY
-        p.${sql.identifier(field)} ${direction === Sorting.Direction.ASC ? sql`ASC` : sql`DESC`}
+        ${sql.identifier(field === "name" ? "p" : "sp")}.${sql.identifier(field)} ${direction ===
+        Sorting.Direction.ASC
+          ? sql`ASC`
+          : sql`DESC`}
       LIMIT
         ${pagination.size}
       OFFSET
         ${Pagination.getNumberOfSkippedItems(pagination)};
     `);
 
-    type Product = InferSelectModel<typeof products>;
-    type DbProduct = Product & {
+    console.log(new PgDialect().sqlToQuery(finalSql).sql);
+
+    type StoreProduct = Out["data"][number];
+    type DbStoreProduct = StoreProduct & {
       totalCount: number;
     };
 
@@ -119,13 +128,17 @@ class DrizzleRepository extends Repository {
       ),
       taskEither.flatMap(({ rows, rowCount }) =>
         function_.pipe(
-          Number((rows[0] as DbProduct)?.totalCount ?? rowCount),
+          Number((rows[0] as DbStoreProduct)?.totalCount ?? rowCount),
           taskEither.fromPredicate(
             (numberOfItems) => !isNaN(numberOfItems),
             () => new ImpossibleError(MESSAGE_ABOUT_INCORRECT_SELECTION_RESULT),
           ),
           taskEither.map((numberOfItems) =>
-            Pagination.createPage(pagination, rows as DbProduct[], numberOfItems),
+            Pagination.createPage(
+              pagination,
+              (rows as DbStoreProduct[]).map(({ totalCount, ...rest }) => rest),
+              numberOfItems,
+            ),
           ),
         ),
       ),
