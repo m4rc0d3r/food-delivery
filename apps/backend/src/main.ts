@@ -6,6 +6,7 @@ import { cors } from "hono/cors";
 import type { Entries } from "type-fest";
 
 import { authRouter } from "./features/auth";
+import { productRouter } from "./features/product";
 import { storeRouter } from "./features/store";
 import { userRouter } from "./features/user";
 import { createConfig, Hono as Hono2 } from "./infra";
@@ -42,7 +43,8 @@ const app = new Hono()
   })
   .route("/auth", authRouter)
   .route("/users", userRouter)
-  .route("/stores", storeRouter);
+  .route("/stores", storeRouter)
+  .route("/products", productRouter);
 
 type App = typeof app;
 
