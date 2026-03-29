@@ -16,7 +16,7 @@ export default defineConfig([
     },
   },
   {
-    files: ["src/{entities/{auth,di,event-bus,store,user},widgets}/**"],
+    files: ["src/{entities/{auth,category,di,event-bus,store,store-product,user},widgets}/**"],
     rules: {
       "fsd/insignificant-slice": "off",
     },
