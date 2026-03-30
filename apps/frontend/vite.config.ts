@@ -11,12 +11,8 @@ export default defineConfig({
   },
   plugins: [
     devtools(),
-    cloudflare({ viteEnvironment: { name: "spa" } }),
-    tanstackStart({
-      spa: {
-        enabled: true,
-      },
-    }),
+    cloudflare({ viteEnvironment: { name: "ssr" } }),
+    tanstackStart(),
     viteReact(),
     tailwindcss(),
   ],
