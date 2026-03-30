@@ -14,6 +14,7 @@ import { ProductCard } from "./product-card";
 import type { Category } from "@/entities/category";
 import { CategoryQuery } from "@/entities/category";
 import { useDiContainer } from "@/entities/di";
+import { ShoppingCartStore } from "@/entities/shopping-cart";
 import type { Store } from "@/entities/store";
 import { StoreProductQuery } from "@/entities/store-product";
 import { DEBOUNCE_TIME } from "@/shared/pacer";
@@ -397,11 +398,23 @@ function ProductPanel({ selectedStore, className, ...props }: Props) {
         </ul>
       ) : storeProducts.data.length ? (
         <ul className="grid grow grid-cols-1 gap-4 overflow-auto md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {storeProducts.data.map((product) => (
-            <li key={[product.storeId, product.productId].join(Str.EMPTY)}>
-              <ProductCard product={product} />
-            </li>
-          ))}
+          {storeProducts.data.map((product) => {
+            const { storeId, productId } = product;
+
+            return (
+              <li key={[storeId, productId].join(Str.EMPTY)}>
+                <ProductCard
+                  product={product}
+                  onAddToCart={() =>
+                    ShoppingCartStore.add({
+                      storeId,
+                      productId,
+                    })
+                  }
+                />
+              </li>
+            );
+          })}
         </ul>
       ) : (
         <p className="text-center">No products found</p>

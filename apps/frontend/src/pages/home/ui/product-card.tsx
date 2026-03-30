@@ -6,7 +6,9 @@ import { formatCurrency, formatDate } from "@/shared/i18n";
 import { cn } from "@/shared/ui/lib";
 import {
   Badge,
+  Button,
   Card,
+  CardAction,
   CardContent,
   CardFooter,
   CardHeader,
@@ -16,10 +18,12 @@ import {
 
 type Props = ComponentProps<typeof Card> & {
   product: StoreProduct;
+  onAddToCart?: (() => void) | undefined;
 };
 
 function ProductCard({
   product: { categoryId, createdAt, image, name, price, productId, stock, storeId },
+  onAddToCart,
   className,
   ...props
 }: Props) {
@@ -77,6 +81,9 @@ function ProductCard({
             <Layers3 className="text-muted-foreground h-3.5 w-3.5" />
             {categoryId}
           </Badge>
+          <CardAction>
+            <Button onClick={onAddToCart}>Add to cart</Button>
+          </CardAction>
         </div>
       </CardHeader>
 

@@ -39,7 +39,7 @@ function MainLayout() {
     {
       name: "Shopping cart",
       Icon: ShoppingCart,
-      path: "/",
+      path: "/shopping-cart",
     },
   ] as const;
 
