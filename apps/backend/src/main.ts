@@ -1,7 +1,8 @@
 import { config as dotenvConfig } from "dotenv";
 import { expand } from "dotenv-expand";
-import { either, function as function_ } from "fp-ts";
+import { either } from "fp-ts";
 import { Hono } from "hono";
+import { env } from "hono/adapter";
 import { cors } from "hono/cors";
 import type { Entries } from "type-fest";
 
@@ -16,9 +17,8 @@ expand(dotenvConfig());
 
 const app = new Hono()
   .use("*", async (c, next) => {
-    const eitherConfig = function_.pipe(
-      createConfig(process.env),
-      either.orElse(() => createConfig(c.env as Parameters<typeof createConfig>[0])),
+    const eitherConfig = createConfig(
+      env(c as Parameters<typeof env>[0]) as Parameters<typeof createConfig>[0],
     );
     if (either.isLeft(eitherConfig)) throw eitherConfig.left;
 
