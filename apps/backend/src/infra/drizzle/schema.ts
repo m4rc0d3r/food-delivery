@@ -118,8 +118,12 @@ const stores = pgTable("stores", {
 const storeProducts = pgTable(
   "store_products",
   {
-    storeId: integer("store_id").notNull(),
-    productId: integer("product_id").notNull(),
+    storeId: integer("store_id")
+      .notNull()
+      .references(() => stores.id),
+    productId: integer("product_id")
+      .notNull()
+      .references(() => products.id),
     price: doublePrecision().notNull(),
     stock: integer().notNull(),
     ...LIFE_CYCLE_DATES,
