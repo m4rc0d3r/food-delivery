@@ -36,7 +36,7 @@ function create(config: Config): ContextVariableMap {
       },
     },
     bcrypt: { roundsForPasswordHash },
-    cookie: { domain, secure },
+    cookie: { domain, sameSite, secure },
     drizzle: { databaseUrl, casing },
     server: { protocol },
   } = config;
@@ -52,7 +52,7 @@ function create(config: Config): ContextVariableMap {
       domain,
       httpOnly: true,
       path: Str.SLASH,
-      sameSite: "strict",
+      sameSite: typeof sameSite === "boolean" ? (sameSite ? "strict" : "none") : sameSite,
       secure: secure === "auto" ? protocol === "https" : secure,
     },
     cryptoService: new CryptoService(generateSafeUid),
