@@ -3,7 +3,7 @@
   "name": "food-delivery-backend",
   "main": "src/main.ts",
   "compatibility_date": "2026-03-26",
-  "compatibility_flags": ["nodejs_compat"],
+  "compatibility_flags": ["nodejs_compat", "nodejs_compat_populate_process_env"],
   "tsconfig": "tsconfig.app.json",
   // "vars": {
   //   "MY_VAR": "my-variable"
