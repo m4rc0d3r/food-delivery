@@ -110,6 +110,7 @@ const router = new Hono()
       config: {
         auth: { tokenCookieName },
       },
+      cookieOptions,
       authTokenService,
     } = c.var;
 
@@ -128,7 +129,13 @@ const router = new Hono()
       taskEither.flatMap((token) =>
         function_.pipe(
           authTokenService.verify(token),
-          taskEither.tapIO(() => () => clearAuthenticationCookies(c, tokenCookieName)),
+          taskEither.tapIO(
+            () => () =>
+              clearAuthenticationCookies(c, {
+                name: tokenCookieName,
+                options: cookieOptions,
+              }),
+          ),
           taskEither.mapLeft(() => Hono2.Response.Factory.unauthorized(c)),
           taskEither.map(() => Hono2.Response.Factory.noContent(c)),
         ),
@@ -159,8 +166,14 @@ function setAuthenticationCookie(
   });
 }
 
-function clearAuthenticationCookies(c: Context, cookieName: string) {
-  deleteCookie(c, cookieName);
+function clearAuthenticationCookies(
+  c: Context,
+  cookie: {
+    name: string;
+    options: CookieOptions;
+  },
+) {
+  deleteCookie(c, cookie.name, cookie.options);
 }
 
 export { router };
