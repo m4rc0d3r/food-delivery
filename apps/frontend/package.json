@@ -63,7 +63,7 @@
     "type-fest": "^5.5.0",
     "typescript": "^5.9.3",
     "vite": "^8.0.2",
-    "wrangler": "^4.77.0"
+    "wrangler": "^4.78.0"
   },
   "license": "ISC",
   "scripts": {
