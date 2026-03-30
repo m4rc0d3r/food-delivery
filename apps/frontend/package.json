@@ -38,6 +38,7 @@
     "zustand": "^5.0.12"
   },
   "devDependencies": {
+    "@cloudflare/vite-plugin": "^1.30.2",
     "@feature-sliced/steiger-plugin": "^0.5.7",
     "@tailwindcss/vite": "^4.2.2",
     "@tanstack/devtools-vite": "^0.6.0",
@@ -61,11 +62,14 @@
     "tailwindcss": "^4.2.2",
     "type-fest": "^5.5.0",
     "typescript": "^5.9.3",
-    "vite": "^8.0.2"
+    "vite": "^8.0.2",
+    "wrangler": "^4.77.0"
   },
   "license": "ISC",
   "scripts": {
     "build": "vite build",
+    "cf-typegen": "wrangler types",
+    "deploy": "pnpm build && wrangler deploy",
     "dev": "vite dev",
     "preview": "vite preview",
     "type-check": "concurrently -p \"[{name}]\" -n \"App,Node\" -c \"blue.bold,yellow.bold\" \"pnpm type-check-app\" \"pnpm type-check-node\"",
