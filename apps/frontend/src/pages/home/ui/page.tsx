@@ -116,6 +116,7 @@ function HomePage() {
   const [selectedStoreId, setSelectedStoreId] = useState<
     ComponentProps<typeof ProductPanel>["selectedStore"]["id"] | null
   >(null);
+  const selectedStore = stores?.data.find(({ id }) => id === selectedStoreId);
 
   return (
     <div className="flex grow">
@@ -374,8 +375,12 @@ function HomePage() {
           <p className="text-center">No stores found</p>
         )}
       </aside>
-      {selectedStoreId !== null && (
-        <ProductPanel selectedStore={stores!.data.find(({ id }) => id === selectedStoreId)!} />
+      {selectedStore ? (
+        <ProductPanel selectedStore={selectedStore} />
+      ) : (
+        <p className="m-auto text-center text-4xl">
+          Select a store in the sidebar to view its products.
+        </p>
       )}
     </div>
   );

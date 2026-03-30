@@ -22,9 +22,10 @@ function AuthResolver({ userService, eventBus }: Props) {
   const logoutLocally = useAuthStore.use.logout();
 
   useEffect(() => {
+    console.log(isMeError, me);
     if (!(me || isMeError)) return;
 
-    if (me) {
+    if (me && !isMeError) {
       loginLocally();
     } else if (isMeError) {
       logoutLocally();

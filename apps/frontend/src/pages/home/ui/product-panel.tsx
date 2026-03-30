@@ -138,6 +138,8 @@ function ProductPanel({ selectedStore, className, ...props }: Props) {
     },
   });
 
+  const shoppingCartItems = ShoppingCartStore.useStore.use.items();
+
   const isFieldInvalid = ({ isTouched, isValid }: { isTouched: boolean; isValid: boolean }) =>
     isTouched && !isValid;
 
@@ -401,19 +403,33 @@ function ProductPanel({ selectedStore, className, ...props }: Props) {
         <ul className="grid grow grid-cols-1 gap-4 overflow-auto md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {storeProducts.data.map((product) => {
             const { storeId, productId } = product;
+            const alreadyInCart = shoppingCartItems.some(
+              (value) => value.storeId === storeId && value.productId === productId,
+            );
 
             return (
-              <li key={[storeId, productId].join(Str.EMPTY)}>
+              <li key={[storeId, productId].join(Str.EMPTY)} className="flex">
                 <ProductCard
                   product={product}
-                  onAddToCart={() => {
-                    ShoppingCartStore.add({
-                      storeId,
-                      productId,
-                    });
-                    toast.success("The product has been added to your cart", {
-                      description: product.name,
-                    });
+                  alreadyInCart={alreadyInCart}
+                  onAddDelete={() => {
+                    if (alreadyInCart) {
+                      ShoppingCartStore.remove({
+                        storeId,
+                        productId,
+                      });
+                      toast.success("The product has been removed from your cart.", {
+                        description: product.name,
+                      });
+                    } else {
+                      ShoppingCartStore.add({
+                        storeId,
+                        productId,
+                      });
+                      toast.success("The product has been added to your cart", {
+                        description: product.name,
+                      });
+                    }
                   }}
                 />
               </li>

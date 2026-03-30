@@ -74,7 +74,6 @@ class DrizzleRepository extends Repository {
                 .returning(),
             (reason) => new UnexpectedError(reason),
           ),
-          taskEither.tapError((e) => taskEither.right(console.log(e.cause))),
           taskEither.map((orderItems) => ({
             id: order.id,
             userId,
@@ -104,9 +103,9 @@ class DrizzleRepository extends Repository {
           rows.reduce(
             (prev, cur) => {
               const order = prev[cur.orders.id];
+              const { productId, price, quantity } = cur.order_items;
               if (!order) {
                 const { id, userId, createdAt } = cur.orders;
-                const { productId, price, quantity } = cur.order_items;
                 prev[id] = {
                   id,
                   userId,
@@ -120,7 +119,6 @@ class DrizzleRepository extends Repository {
                   ],
                 };
               } else {
-                const { productId, price, quantity } = cur.order_items;
                 order.items.push({
                   productId,
                   price,

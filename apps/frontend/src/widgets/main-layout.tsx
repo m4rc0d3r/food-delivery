@@ -16,11 +16,13 @@ import { toast } from "sonner";
 import type { Me } from "@/entities/auth";
 import { AuthQuery, AuthStatus, useAuthStore } from "@/entities/auth";
 import { useDiContainer } from "@/entities/di";
+import { ShoppingCartStore } from "@/entities/shopping-cart";
 import { UserQuery } from "@/entities/user";
 import type { Theme } from "@/shared/theming";
 import { THEMES, useTheme } from "@/shared/theming";
 import { cn } from "@/shared/ui/lib";
 import {
+  Badge,
   Button,
   DropdownMenu,
   DropdownMenuContent,
@@ -70,6 +72,8 @@ function MainLayout() {
     },
   ] as const;
 
+  const shoppingCartItems = ShoppingCartStore.useStore.use.items();
+
   return (
     <div className="flex h-full flex-col">
       <header>
@@ -90,6 +94,11 @@ function MainLayout() {
                         <Link to={item.path}>
                           <Icon />
                           {name}
+                          {item.path === "/shopping-cart" && (
+                            <Badge variant="outline" className="absolute top-0 right-0">
+                              {shoppingCartItems.length}
+                            </Badge>
+                          )}
                         </Link>
                       </DropdownMenuItem>
                     );
@@ -109,7 +118,14 @@ function MainLayout() {
                   return (
                     <li key={index}>
                       <Button asChild variant="link">
-                        <Link to={item.path}>{name}</Link>
+                        <Link to={item.path} className="relative">
+                          {name}
+                          {item.path === "/shopping-cart" && (
+                            <Badge variant="outline" className="absolute -top-2 -right-2">
+                              {shoppingCartItems.length}
+                            </Badge>
+                          )}
+                        </Link>
                       </Button>
                     </li>
                   );

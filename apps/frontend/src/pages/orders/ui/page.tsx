@@ -71,7 +71,7 @@ function OrdersPage() {
           ))}
         </ul>
       ) : (
-        <p className="text-center">No orders found</p>
+        <p className="m-auto text-center text-4xl">No orders found</p>
       )}
     </div>
   );

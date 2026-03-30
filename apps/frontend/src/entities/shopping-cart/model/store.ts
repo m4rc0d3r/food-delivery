@@ -70,15 +70,18 @@ const useStore = createSelectors(
   ),
 );
 
-function add(value: ItemId) {
+function add({ storeId, productId }: ItemId) {
   useStore.setState(({ items }) => ({
-    items: [
-      ...items,
-      {
-        ...value,
-        quantity: 1,
-      },
-    ],
+    items: items.some((value) => value.storeId === storeId && value.productId === productId)
+      ? items
+      : [
+          ...items,
+          {
+            storeId,
+            productId,
+            quantity: 1,
+          },
+        ],
   }));
 }
 
@@ -108,7 +111,7 @@ function changeQuantity({
 }
 
 function clear() {
-  useStore.setState(initialState);
+  useStore.setState(useStore.getInitialState());
 }
 
 export { add, changeQuantity, clear, remove, useStore };

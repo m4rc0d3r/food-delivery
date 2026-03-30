@@ -26,7 +26,7 @@ const STORE_NAME = "AuthStore";
 const useAuthStore = createSelectors(
   create<State>()(
     devtools(
-      (set) =>
+      (set, _get, store) =>
         ({
           ...initialState,
           login: () =>
@@ -38,7 +38,7 @@ const useAuthStore = createSelectors(
               ...initialState,
               status: AuthStatus.UNAUTHENTICATED,
             }),
-          reset: () => set(initialState),
+          reset: () => set(store.getInitialState()),
         }) satisfies State,
       {
         store: STORE_NAME,

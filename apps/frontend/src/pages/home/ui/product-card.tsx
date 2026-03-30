@@ -18,12 +18,14 @@ import {
 
 type Props = ComponentProps<typeof Card> & {
   product: StoreProduct;
-  onAddToCart?: (() => void) | undefined;
+  alreadyInCart?: boolean | undefined;
+  onAddDelete?: (() => void) | undefined;
 };
 
 function ProductCard({
   product: { categoryId, createdAt, image, name, price, productId, stock, storeId },
-  onAddToCart,
+  alreadyInCart = false,
+  onAddDelete,
   className,
   ...props
 }: Props) {
@@ -70,7 +72,7 @@ function ProductCard({
       </div>
 
       <CardHeader className="p-4 pb-2">
-        <div className="flex items-start justify-between gap-2">
+        <div className="flex flex-wrap items-start justify-between gap-2">
           <CardTitle className="hover:text-primary line-clamp-2 cursor-pointer text-xl leading-tight font-bold">
             {name}
           </CardTitle>
@@ -82,12 +84,14 @@ function ProductCard({
             {categoryId}
           </Badge>
           <CardAction>
-            <Button onClick={onAddToCart}>Add to cart</Button>
+            <Button variant={alreadyInCart ? "destructive" : "default"} onClick={onAddDelete}>
+              {alreadyInCart ? "Remove from cart" : "Add to cart"}
+            </Button>
           </CardAction>
         </div>
       </CardHeader>
 
-      <CardContent className="flex flex-col gap-4 p-4 pt-2 pb-3">
+      <CardContent className="flex grow flex-col gap-4 p-4 pt-2 pb-3">
         <div className="bg-muted/50 flex items-end justify-between gap-2 rounded-lg border p-3">
           <div className="flex flex-col gap-0.5">
             <span className="text-muted-foreground text-xs font-medium tracking-wider uppercase">
@@ -129,14 +133,14 @@ function ProductCard({
           <div className="flex items-center gap-2">
             <Tag className="h-4 w-4 text-emerald-600" />
             <span>
-              Product:{" "}
+              Product:
               <span className="text-foreground font-medium tabular-nums">#{productId}</span>
             </span>
           </div>
         </div>
       </CardContent>
 
-      <CardFooter className="text-muted-foreground bg-muted/20 flex items-center gap-1.5 border-t p-4 pt-0 text-xs">
+      <CardFooter className="text-muted-foreground bg-muted/20 flex items-center gap-1.5 border-t p-4 pt-0 pt-1 text-xs">
         <CalendarDays className="h-3.5 w-3.5" />
         Added: {formatDate(createdAt)}
       </CardFooter>
