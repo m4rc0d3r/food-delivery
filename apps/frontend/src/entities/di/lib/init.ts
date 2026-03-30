@@ -6,6 +6,7 @@ import type { DiContainer } from "../model";
 import { AuthApiProvider, AuthService } from "@/entities/auth/@x/di";
 import { CategoryApiProvider, CategoryService } from "@/entities/category/@x/di";
 import type { EventBusEvent } from "@/entities/event-bus/@x/di";
+import { OrderApiProvider, OrderService } from "@/entities/order/@x/di";
 import { StoreProductApiProvider, StoreProductService } from "@/entities/store-product/@x/di";
 import { StoreApiProvider, StoreService } from "@/entities/store/@x/di";
 import { UserApiProvider, UserService } from "@/entities/user/@x/di";
@@ -51,6 +52,7 @@ function initDiContainer({ config }: Params): DiContainer {
     storeService: new StoreService(new StoreApiProvider(client)),
     storeProductService: new StoreProductService(new StoreProductApiProvider(client)),
     categoryService: new CategoryService(new CategoryApiProvider(client)),
+    orderService: new OrderService(new OrderApiProvider(client)),
     eventBus,
   };
 }

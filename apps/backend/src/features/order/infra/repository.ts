@@ -1,4 +1,4 @@
-import { ImpossibleError, Pagination, UnexpectedError } from "@workspace/core";
+import { ImpossibleError, UnexpectedError } from "@workspace/core";
 import { eq, sql } from "drizzle-orm";
 import { function as function_, taskEither } from "fp-ts";
 
@@ -11,9 +11,6 @@ import { orderItems, orders } from "@/infra";
 
 const MESSAGE_ABOUT_INCORRECT_INSERTION_RESULT =
   "The array of rows returned from the database must contain 1 element since no errors occurred during the insert.";
-
-const MESSAGE_ABOUT_INCORRECT_SELECTION_RESULT =
-  "The row array returned from the database must contain 1 element because the query uses a row count aggregate function.";
 
 class DrizzleRepository extends Repository {
   private readonly db: Db;
@@ -60,13 +57,15 @@ class DrizzleRepository extends Repository {
                   items.map(({ storeId, productId, quantity }) => ({
                     orderId: order.id,
                     price: sql`
-                      SELECT
-                        price
-                      FROM
-                        store_products
-                      WHERE
-                        store_id = ${storeId}
-                        AND product_id = ${productId}
+                      (
+                        SELECT
+                          price
+                        FROM
+                          store_products
+                        WHERE
+                          store_id = ${storeId}
+                          AND product_id = ${productId}
+                      )
                     `,
                     productId,
                     quantity,
@@ -75,68 +74,62 @@ class DrizzleRepository extends Repository {
                 .returning(),
             (reason) => new UnexpectedError(reason),
           ),
-          taskEither.map((orderItems) =>
-            orderItems.map(({ productId, price, quantity, createdAt }) => ({
-              id: order.id,
-              userId,
+          taskEither.tapError((e) => taskEither.right(console.log(e.cause))),
+          taskEither.map((orderItems) => ({
+            id: order.id,
+            userId,
+            createdAt: order.createdAt,
+            items: orderItems.map(({ productId, price, quantity }) => ({
               productId,
               price,
               quantity,
-              createdAt,
             })),
-          ),
+          })),
         ),
       ),
     );
   }
 
-  override list({
-    pagination,
-  }: RepositoryIos.List.In): taskEither.TaskEither<UnexpectedError | ImpossibleError, Out> {
+  override list(
+    _params: RepositoryIos.List.In,
+  ): taskEither.TaskEither<UnexpectedError | ImpossibleError, Out> {
     return function_.pipe(
       taskEither.tryCatch(
         () =>
-          Promise.all([
-            this.db
-              .select()
-              .from(orders)
-              .innerJoin(orderItems, eq(orders.id, orderItems.orderId))
-              .limit(pagination.size)
-              .offset(Pagination.getNumberOfSkippedItems(pagination)),
-            this.db
-              .select({
-                count: sql`count(*)`,
-              })
-              .from(orders)
-              .innerJoin(orderItems, eq(orders.id, orderItems.orderId)),
-          ]),
+          this.db.select().from(orders).innerJoin(orderItems, eq(orders.id, orderItems.orderId)),
         (reason) => new UnexpectedError(reason),
       ),
-      taskEither.flatMap(([rows, [{ count } = {}]]) =>
-        function_.pipe(
-          Number(count),
-          taskEither.fromPredicate(
-            (numberOfItems) => !isNaN(numberOfItems),
-            () => new ImpossibleError(MESSAGE_ABOUT_INCORRECT_SELECTION_RESULT),
-          ),
-          taskEither.map((numberOfItems) =>
-            Pagination.createPage(
-              pagination,
-              rows.map(
-                ({
-                  orders: { id, userId },
-                  order_items: { productId, price, quantity, createdAt },
-                }) => ({
+      taskEither.map((rows) =>
+        Object.values(
+          rows.reduce(
+            (prev, cur) => {
+              const order = prev[cur.orders.id];
+              if (!order) {
+                const { id, userId, createdAt } = cur.orders;
+                const { productId, price, quantity } = cur.order_items;
+                prev[id] = {
                   id,
                   userId,
+                  createdAt,
+                  items: [
+                    {
+                      productId,
+                      price,
+                      quantity,
+                    },
+                  ],
+                };
+              } else {
+                const { productId, price, quantity } = cur.order_items;
+                order.items.push({
                   productId,
                   price,
                   quantity,
-                  createdAt,
-                }),
-              ),
-              numberOfItems,
-            ),
+                });
+              }
+              return prev;
+            },
+            {} as Record<number, Out[number]>,
           ),
         ),
       ),

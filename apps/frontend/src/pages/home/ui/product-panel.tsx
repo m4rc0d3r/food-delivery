@@ -6,6 +6,7 @@ import { zStoreProductRepositoryIosListIn } from "backend";
 import { ArrowDownNarrowWide, ArrowUpNarrowWide, Funnel } from "lucide-react";
 import type { ComponentProps, CSSProperties } from "react";
 import { useState } from "react";
+import { toast } from "sonner";
 import type z from "zod";
 
 import { defineListParamsChangeHandlers } from "./common";
@@ -405,12 +406,15 @@ function ProductPanel({ selectedStore, className, ...props }: Props) {
               <li key={[storeId, productId].join(Str.EMPTY)}>
                 <ProductCard
                   product={product}
-                  onAddToCart={() =>
+                  onAddToCart={() => {
                     ShoppingCartStore.add({
                       storeId,
                       productId,
-                    })
-                  }
+                    });
+                    toast.success("The product has been added to your cart", {
+                      description: product.name,
+                    });
+                  }}
                 />
               </li>
             );

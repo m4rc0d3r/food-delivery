@@ -6,9 +6,9 @@ const LOGIN = "login";
 const LOGOUT = "logout";
 
 const MUTATION_KEYS = createMutationKeys(AUTH, {
-  REGISTER: "register",
-  LOGIN: "login",
-  LOGOUT: "logout",
+  REGISTER,
+  LOGIN,
+  LOGOUT,
 });
 
 export { LOGIN, LOGOUT, MUTATION_KEYS, REGISTER };

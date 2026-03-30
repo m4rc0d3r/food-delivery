@@ -1,0 +1,4 @@
+.rating svg:hover,
+.rating svg:hover ~ svg {
+  fill: var(--accent);
+}

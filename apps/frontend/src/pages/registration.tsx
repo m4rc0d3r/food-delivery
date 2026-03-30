@@ -60,7 +60,7 @@ const FIELDS_CONFIG: Record<FieldConfig["name"], Omit<FieldConfig, "name">> = {
     },
   },
   password: {
-    label: "password",
+    label: "Password",
     description: "Come up with a complex password",
     inputProps: {
       type: "password",

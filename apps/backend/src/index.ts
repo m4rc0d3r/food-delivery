@@ -8,7 +8,10 @@ export {
   zOut as zOrderRepositoryIosListOut,
 } from "./features/order/app/ports/repository/ios/list";
 export { zIn as zOrderRouterIosCreateByAuthIn } from "./features/order/infra/router/ios/create-by-auth";
-export { zIn as zOrderRouterIosCreateByUnauthIn } from "./features/order/infra/router/ios/create-by-unauth";
+export {
+  zIn as zOrderRouterIosCreateByUnauthIn,
+  zOut as zOrderRouterIosCreateByUnauthOut,
+} from "./features/order/infra/router/ios/create-by-unauth";
 export {
   zIn as zStoreProductRepositoryIosListIn,
   zOut as zStoreProductRepositoryIosListOut,

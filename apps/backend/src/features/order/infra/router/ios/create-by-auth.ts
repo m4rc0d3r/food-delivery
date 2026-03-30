@@ -1,8 +1,8 @@
 import type * as z from "zod";
 
-import { OrderRepositoryIos } from "@/features/order";
+import { zIn as zCreateIn } from "@/features/order/app/ports/repository/ios/create";
 
-const zIn = OrderRepositoryIos.Create.zIn.omit({
+const zIn = zCreateIn.omit({
   userId: true,
 });
 type In = z.infer<typeof zIn>;

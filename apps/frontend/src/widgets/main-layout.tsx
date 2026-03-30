@@ -1,6 +1,15 @@
 import { Link, Outlet, useNavigate } from "@tanstack/react-router";
 import { Str } from "@workspace/core";
-import { BookImage, MenuIcon, Moon, ShoppingCart, Store, Sun, UserIcon } from "lucide-react";
+import {
+  BookImage,
+  MenuIcon,
+  Moon,
+  Notebook,
+  ShoppingCart,
+  Store,
+  Sun,
+  UserIcon,
+} from "lucide-react";
 import type { ComponentProps } from "react";
 import { toast } from "sonner";
 
@@ -40,6 +49,11 @@ function MainLayout() {
       name: "Shopping cart",
       Icon: ShoppingCart,
       path: "/shopping-cart",
+    },
+    {
+      name: "Orders",
+      Icon: Notebook,
+      path: "/orders",
     },
   ] as const;
 

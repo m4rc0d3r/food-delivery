@@ -1,18 +1,27 @@
+import { Domain } from "@workspace/core";
 import type * as z from "zod";
 
-import { OrderRepositoryIos } from "@/features/order";
-import { UserServiceIos } from "@/features/user";
+import {
+  zIn as zRepositoryCreateIn,
+  zOut as zRepositoryCreateOut,
+} from "@/features/order/app/ports/repository/ios/create";
+import { zIn as zServiceCreateIn } from "@/features/user/app/service/ios/create";
 
-const zIn = OrderRepositoryIos.Create.zIn
+const zIn = zRepositoryCreateIn
   .omit({
     userId: true,
   })
   .extend({
-    user: UserServiceIos.Create.zIn.omit({
+    user: zServiceCreateIn.omit({
       password: true,
     }),
   });
 type In = z.infer<typeof zIn>;
 
-export { zIn };
-export type { In };
+const zOut = zRepositoryCreateOut.extend({
+  userPassword: Domain.User.zSchema.shape.password,
+});
+type Out = z.infer<typeof zOut>;
+
+export { zIn, zOut };
+export type { In, Out };

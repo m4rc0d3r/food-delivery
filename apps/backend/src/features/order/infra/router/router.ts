@@ -9,6 +9,7 @@ import { CreateByAuth, CreateByUnauth } from "./ios";
 
 import { UniqueKeyViolationError } from "@/app";
 import { ErrorCode, Hono as Hono2 } from "@/infra";
+import { auth } from "@/infra/hono/middleware/auth";
 
 const router = new Hono()
   .post("/list", zValidator("json", OrderRepositoryIos.List.zIn), async (c) => {
@@ -30,23 +31,32 @@ const router = new Hono()
     const creationResult = await function_.pipe(
       generateUid(12),
       taskEither.flatMap((password) =>
-        userService.create({
-          ...user,
-          password,
-        }),
-      ),
-      taskEither.flatMap(({ id }) =>
         function_.pipe(
-          orderService.create({
-            userId: id,
-            items,
+          userService.create({
+            ...user,
+            password,
           }),
-          taskEither.tapError(() =>
-            taskEither.right(
-              userService.delete({
-                id,
+          taskEither.flatMap(({ id }) =>
+            function_.pipe(
+              orderService.create({
+                userId: id,
+                items,
               }),
+              taskEither.tapError(() =>
+                taskEither.right(
+                  userService.delete({
+                    id,
+                  }),
+                ),
+              ),
             ),
+          ),
+          taskEither.map(
+            (value) =>
+              ({
+                ...value,
+                userPassword: password,
+              }) satisfies CreateByUnauth.Out,
           ),
         ),
       ),
@@ -70,7 +80,7 @@ const router = new Hono()
       order: creationResult,
     });
   })
-  .use(Hono2.Middleware.auth)
+  .use(auth)
   .post("/create-by-auth", zValidator("json", CreateByAuth.zIn), async (c) => {
     const {
       orderService,

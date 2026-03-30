@@ -7,7 +7,7 @@ import { Password, PasswordHash } from "./attributes";
 const zSchema = z
   .object({
     id: Id.zSchema,
-    fullName: z.string().trim(),
+    fullName: z.string().trim().min(2),
     email: z.email(),
     phone: z.e164(),
     address: z.string().trim(),

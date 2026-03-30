@@ -1,18 +1,19 @@
 import { Domain } from "@workspace/core";
-import type * as z from "zod";
+import * as z from "zod";
 
 const zOut = Domain.Order.zSchema
   .omit({
     updatedAt: true,
   })
-  .extend(
-    Domain.OrderItem.zSchema.pick({
-      productId: true,
-      price: true,
-      quantity: true,
-      createdAt: true,
-    }).shape,
-  );
+  .extend({
+    items: z.array(
+      Domain.OrderItem.zSchema.pick({
+        productId: true,
+        price: true,
+        quantity: true,
+      }),
+    ),
+  });
 type Out = z.infer<typeof zOut>;
 
 export { zOut };

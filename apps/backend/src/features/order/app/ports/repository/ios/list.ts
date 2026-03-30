@@ -8,7 +8,7 @@ const zIn = z.object({
 });
 type In = z.infer<typeof zIn>;
 
-const zOut = Pagination.createPageSchema(Common.zOut);
+const zOut = z.array(Common.zOut);
 type Out = z.infer<typeof zOut>;
 
 export { zIn, zOut };

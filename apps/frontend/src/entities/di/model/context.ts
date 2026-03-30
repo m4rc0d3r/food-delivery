@@ -1,6 +1,7 @@
 import type { AuthService } from "@/entities/auth/@x/di";
 import type { CategoryService } from "@/entities/category/@x/di";
 import type { EventBus } from "@/entities/event-bus/@x/di";
+import type { OrderService } from "@/entities/order/@x/di";
 import type { StoreProductService } from "@/entities/store-product/@x/di";
 import type { StoreService } from "@/entities/store/@x/di";
 import type { UserService } from "@/entities/user/@x/di";
@@ -12,6 +13,7 @@ type DiContainer = {
   storeService: StoreService;
   storeProductService: StoreProductService;
   categoryService: CategoryService;
+  orderService: OrderService;
   eventBus: EventBus;
 };
 

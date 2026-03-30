@@ -18,7 +18,7 @@ const zIn = z.object({
 });
 type In = z.infer<typeof zIn>;
 
-const zOut = z.array(Common.zOut);
+const zOut = Common.zOut;
 type Out = z.infer<typeof zOut>;
 
 export { zIn, zOut };
