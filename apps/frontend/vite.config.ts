@@ -8,5 +8,14 @@ export default defineConfig({
   resolve: {
     tsconfigPaths: true,
   },
-  plugins: [devtools(), tanstackStart(), viteReact(), tailwindcss()],
+  plugins: [
+    devtools(),
+    tanstackStart({
+      spa: {
+        enabled: true,
+      },
+    }),
+    viteReact(),
+    tailwindcss(),
+  ],
 });
