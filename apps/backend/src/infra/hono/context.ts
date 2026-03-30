@@ -10,6 +10,7 @@ import { CategoryService, DrizzleCategoryRepository } from "@/features/category"
 import { CryptoService, generateSafeUid } from "@/features/crypto";
 import { BcryptHashProvider, HashingService } from "@/features/hashing";
 import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
+import { DrizzleOrderRepository, OrderService } from "@/features/order";
 import { DrizzleStoreRepository, StoreService } from "@/features/store";
 import { DrizzleStoreProductRepository, StoreProductService } from "@/features/store-product";
 import { DrizzleUserRepository, UserService } from "@/features/user";
@@ -25,6 +26,7 @@ declare module "hono" {
     storeService: StoreService;
     storeProductService: StoreProductService;
     categoryService: CategoryService;
+    orderService: OrderService;
   }
 }
 
@@ -67,6 +69,7 @@ function create(config: Config): ContextVariableMap {
     storeService: new StoreService(new DrizzleStoreRepository(db)),
     storeProductService: new StoreProductService(new DrizzleStoreProductRepository(db)),
     categoryService: new CategoryService(new DrizzleCategoryRepository(db)),
+    orderService: new OrderService(new DrizzleOrderRepository(db)),
   };
 }
 

@@ -78,24 +78,24 @@ const orders = pgTable("orders", {
   userId: integer("user_id")
     .notNull()
     .references(() => users.id),
-  storeId: integer("store_id")
-    .notNull()
-    .references(() => stores.id),
   ...LIFE_CYCLE_DATES,
 });
 
-const orderItems = pgTable("order_items", {
-  id: serial().primaryKey(),
-  orderId: integer("order_id")
-    .notNull()
-    .references(() => orders.id),
-  productId: integer("product_id")
-    .notNull()
-    .references(() => products.id),
-  quantity: integer().notNull(),
-  price: doublePrecision().notNull(),
-  ...LIFE_CYCLE_DATES,
-});
+const orderItems = pgTable(
+  "order_items",
+  {
+    orderId: integer("order_id")
+      .notNull()
+      .references(() => orders.id),
+    productId: integer("product_id")
+      .notNull()
+      .references(() => products.id),
+    quantity: integer().notNull(),
+    price: doublePrecision().notNull(),
+    ...LIFE_CYCLE_DATES,
+  },
+  (table) => [primaryKey({ columns: [table.orderId, table.productId] })],
+);
 
 const products = pgTable("products", {
   id: serial().primaryKey(),

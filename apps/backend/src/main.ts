@@ -8,6 +8,7 @@ import type { Entries } from "type-fest";
 
 import { authRouter } from "./features/auth";
 import { categoryRouter } from "./features/category";
+import { orderRouter } from "./features/order";
 import { storeRouter } from "./features/store";
 import { storeproductRouter } from "./features/store-product";
 import { userRouter } from "./features/user";
@@ -51,7 +52,8 @@ const app = new Hono()
   .route("/users", userRouter)
   .route("/stores", storeRouter)
   .route("/store-products", storeproductRouter)
-  .route("/categories", categoryRouter);
+  .route("/categories", categoryRouter)
+  .route("/orders", orderRouter);
 
 type App = typeof app;
 

@@ -4,7 +4,6 @@ import { Id, LifeCycleDates, PositiveQuantity, Price } from "../common";
 
 const zSchema = z
   .object({
-    id: Id.zSchema,
     orderId: Id.zSchema,
     productId: Id.zSchema,
     quantity: PositiveQuantity.zSchema,

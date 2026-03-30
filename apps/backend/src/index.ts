@@ -1,5 +1,13 @@
 export { zOut as zCategoryRepositoryIosListOut } from "./features/category/app/ports/repository/ios/list";
 export {
+  zIn as zStoreProductRepositoryIosCreateIn,
+  zOut as zStoreProductRepositoryIosCreateOut,
+} from "./features/order/app/ports/repository/ios/create";
+export {
+  zIn as zOrderRepositoryIosListIn,
+  zOut as zOrderRepositoryIosListOut,
+} from "./features/order/app/ports/repository/ios/list";
+export {
   zIn as zStoreProductRepositoryIosListIn,
   zOut as zStoreProductRepositoryIosListOut,
 } from "./features/store-product/app/ports/repository/ios/list";

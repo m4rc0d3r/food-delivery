@@ -22,6 +22,20 @@
       "when": 1774831355926,
       "tag": "0002_parched_ma_gnuci",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1774846924394,
+      "tag": "0003_slimy_annihilus",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1774847422242,
+      "tag": "0004_real_salo",
+      "breakpoints": true
     }
   ]
 }
