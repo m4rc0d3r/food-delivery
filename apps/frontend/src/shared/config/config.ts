@@ -25,7 +25,11 @@ function createConfig(
       }),
     (error) => {
       if (error instanceof z.ZodError) {
-        return new Error("Failed to create application configuration.", { cause: error });
+        return new Error(
+          `Failed to create application configuration. Cause:
+${z.prettifyError(error)}`,
+          { cause: error },
+        );
       }
       throw error;
     },
