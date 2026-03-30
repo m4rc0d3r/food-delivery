@@ -42,7 +42,7 @@ function create(config: Config): ContextVariableMap {
     bcrypt: { roundsForPasswordHash },
     cookie: { domain, sameSite, secure },
     drizzle: { databaseUrl, casing },
-    server: { protocol },
+    backendApp: { protocol },
   } = config;
 
   const db = drizzle({
