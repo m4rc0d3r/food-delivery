@@ -3,4 +3,8 @@ export {
   RepositoryIos as OrderRepositoryIos,
   Service as OrderService,
 } from "./app";
-export { DrizzleRepository as DrizzleOrderRepository, router as orderRouter } from "./infra";
+export {
+  DrizzleRepository as DrizzleOrderRepository,
+  router as orderRouter,
+  RouterIos as orderRouterIos,
+} from "./infra";

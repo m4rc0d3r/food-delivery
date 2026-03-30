@@ -32,6 +32,10 @@ class Service {
     );
   }
 
+  delete(params: RepositoryIos.Delete.In) {
+    this.userRepository.delete(params);
+  }
+
   getByCredentials({ password, ...params }: GetByCredentials.In) {
     return function_.pipe(
       this.userRepository.getByContactDetails(params),

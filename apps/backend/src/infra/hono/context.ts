@@ -7,6 +7,7 @@ import type { Config } from "../config";
 
 import type { AuthTokenPayload } from "@/features/auth";
 import { CategoryService, DrizzleCategoryRepository } from "@/features/category";
+import type { GenerateUid } from "@/features/crypto";
 import { CryptoService, generateSafeUid } from "@/features/crypto";
 import { BcryptHashProvider, HashingService } from "@/features/hashing";
 import { generateJwt, JwtService, verifyJwt } from "@/features/jwt";
@@ -20,6 +21,7 @@ declare module "hono" {
   interface ContextVariableMap {
     config: Config;
     cookieOptions: CookieOptions;
+    generateUid: GenerateUid;
     cryptoService: CryptoService;
     authTokenService: JwtService<AuthTokenPayload>;
     userService: UserService;
@@ -48,6 +50,8 @@ function create(config: Config): ContextVariableMap {
     casing,
   });
 
+  const generateUid = generateSafeUid;
+
   return {
     config: config,
     cookieOptions: {
@@ -57,7 +61,8 @@ function create(config: Config): ContextVariableMap {
       sameSite: typeof sameSite === "boolean" ? (sameSite ? "strict" : "none") : sameSite,
       secure: secure === "auto" ? protocol === "https" : secure,
     },
-    cryptoService: new CryptoService(generateSafeUid),
+    generateUid,
+    cryptoService: new CryptoService(generateUid),
     authTokenService: new JwtService(secret, lifetime, generateJwt, verifyJwt),
     userService: new UserService(
       new DrizzleUserRepository(db),

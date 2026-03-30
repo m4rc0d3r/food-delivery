@@ -51,6 +51,28 @@ class DrizzleRepository extends Repository {
     );
   }
 
+  override delete({
+    id,
+  }: RepositoryIos.Delete.In): taskEither.TaskEither<
+    UnexpectedError | ImpossibleError | NotFoundError,
+    void
+  > {
+    return function_.pipe(
+      taskEither.tryCatch(
+        () => this.db.delete(users).where(eq(users.id, id)),
+        (reason) => new UnexpectedError(reason),
+      ),
+      taskEither.map(({ rowCount }) => rowCount),
+      taskEither.flatMap(
+        taskEither.fromPredicate(
+          (rowCount) => !!rowCount && rowCount > 0,
+          () => new NotFoundError(),
+        ),
+      ),
+      taskEither.map(() => void 0),
+    );
+  }
+
   override getByContactDetails({
     emailOrPhone,
   }: RepositoryIos.GetByContactDetails.In): taskEither.TaskEither<
